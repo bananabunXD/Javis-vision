@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Javis Vision</title>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #e6ffff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Glowing background pulse */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0, 240, 255, 0.05), transparent 70%);
+      animation: pulse 6s ease-in-out infinite;
+      z-index: -1;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Particle canvas */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+    }
+    header p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    section {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #00f0ff;
+      border-bottom: 2px solid #00f0ff;
+      padding-bottom: 0.5rem;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 10px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .cta a {
+      background: #00f0ff;
+      color: #000;
+      padding: 1rem 2rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00f0ff;
+    }
+
+    #signup form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    #signup input, #signup button {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    #signup button {
+      background: #00f0ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #signup button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00f0ff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: #aaa;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <h1>Javis Vision</h1>
+    <p>See the world. Smarter.</p>
+  </header>
+
+  <section>
+    <h2>About</h2>
+    <p>Javis Vision is a revolutionary smart glasses concept powered by AI. Designed to enhance your perception, assist your daily life, and connect you to the world in real time.</p>
+  </section>
+
+  <section>
+    <h2>Features</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>🎨 Color Detection</h3>
+        <p>Helps users with color blindness by identifying and correcting colors in real time.</p>
+      </div>
+      <div class="feature">
+        <h3>🌍 Live Translation</h3>
+        <p>Translates spoken language instantly, making global communication effortless.</p>
+      </div>
+      <div class="feature">
+        <h3>🧭 Navigation</h3>
+        <p>AR overlays guide you through streets, buildings, and even indoor spaces.</p>
+      </div>
+      <div class="feature">
+        <h3>🔔 Smart Alerts</h3>
+        <p>Get reminders, messages, and notifications right in your field of view.</p>
+      </div>
+    </div>
+    <div class="cta">
+      <a href="#signup">Join the Waitlist</a>
+    </div>
+  </section>
+
+  <section id="signup">
+    <h2>Join the Waitlist</h2>
+    <form>
+      <input type="email" placeholder="Enter your email" required />
+      <button type="submit">Sign Up</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Javis Vision. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Particle background
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = Array.from({ length: 60 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 1,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00f0ff';
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
